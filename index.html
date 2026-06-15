@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+    <script>
+      // 1. Ensure trailing slash on GitHub Pages directory URLs so relative assets (./assets) resolve correctly
+      if (window.location.hostname.endsWith('github.io')) {
+        var path = window.location.pathname;
+        if (path && !path.endsWith('/') && !path.split('/').pop().includes('.')) {
+          window.location.replace(window.location.protocol + '//' + window.location.host + path + '/' + window.location.search + window.location.hash);
+        }
+      }
+
+      // 2. Global error boundary to capture any launch-time failures and display helpful details instead of a white page
+      window.addEventListener('error', function(e) {
+        // Only trigger if error happens within first 8 seconds and UI hasn't rendered
+        var root = document.getElementById('root');
+        if (root && (!root.innerHTML || root.innerHTML.trim() === '')) {
+          root.innerHTML = `
+            <div style="font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background-color: #0c0f1a; color: #f3f4f6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+              <div style="background-color: #141a2e; border: 1px solid #ef4444; border-radius: 16px; max-width: 600px; padding: 32px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4); margin: auto;">
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; border-bottom: 1px solid #1e293b; padding-bottom: 16px;">
+                  <span style="font-size: 36px;">🛑</span>
+                  <div>
+                    <h1 style="font-size: 20px; font-weight: 700; color: #ef4444; margin: 0; line-height: 1.3;">অপ্রত্যাশিত ত্রুটি (Runtime Error)</h1>
+                    <p style="font-size: 11px; color: #94a3b8; margin: 4px 0 0 0; font-family: monospace;">Global Script Error Handler</p>
+                  </div>
+                </div>
+                
+                <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-bottom: 20px;">
+                  ওয়েবসাইটটি লোড হওয়ার সময় ব্রাউজারে একটি ত্রুটি ঘটেছে। এটি সাধারণত পুরাতন ক্যাশ ফাইল জমা থাকার কারণে অথবা নেটওয়ার্ক সমস্যার কারণে কিছু ফাইল লোড হতে না পারলে হয়ে থাকে।
+                </p>
+                
+                <div style="background-color: #0b0f19; border-left: 4px solid #ef4444; padding: 14px 18px; border-radius: 8px; font-size: 12px; color: #f87171; font-family: monospace; line-height: 1.5; word-break: break-all; margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
+                  <strong>ত্রুটির বিবরণ:</strong><br/>
+                  \${e.message || 'Unknown Javascript Exception'}<br/>
+                  <span style="color: #64748b; font-size: 11px; display: block; margin-top: 6px;">
+                    ত্রুটির উৎস: \${e.filename || 'unknown'}:\${e.lineno || 0}:\${e.colno || 0}
+                  </span>
+                </div>
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button onclick="window.location.reload(true)" style="background-color: #dc2626; color: #ffffff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;">
+                    রিলোড করুন (Force Reload)
+                  </button>
+                  <button onclick="window.location.replace(window.location.pathname)" style="background-color: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s;">
+                    হোমপেজে ফিরে যান
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      // Extract SPA redirect params from GitHub Pages 404.html and map to Hash Route
+      (function() {
+        var q = window.location.search;
+        if (q && q.slice(0, 3) === '?p=') {
+          var path = decodeURIComponent(q.slice(3).split('&')[0]).replace(/^\/+/, '');
+          window.location.hash = '#/' + path;
+          window.history.replaceState(null, null, window.location.pathname + window.location.hash);
+        }
+      })();
+
+      (function() {
+        try {
+          var originalFetch = window.fetch;
+          var customFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return customFetch; },
+            set: function(val) { customFetch = val; },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          console.warn("Could not patch window.fetch:", e);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Auto-detect if raw/source index.html is loaded directly on GitHub Pages instead of compiled dist/index.html
+      document.addEventListener("DOMContentLoaded", function() {
+        if (window.location.hostname.endsWith('github.io') && document.querySelector('script[src*="main.tsx"]')) {
+          var container = document.getElementById('root');
+          if (container) {
+            container.innerHTML = `
+              <div style="font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background-color: #0c0f1a; color: #f3f4f6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: left; box-sizing: border-box; overflow-y: auto;">
+                <div style="background-color: #141a2e; border: 1px solid #1e293b; border-radius: 16px; max-width: 650px; padding: 32px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4); margin: auto;">
+                  <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 24px; border-bottom: 1px solid #1e293b; padding-bottom: 16px;">
+                    <span style="font-size: 36px;">⚠️</span>
+                    <div>
+                      <h1 style="font-size: 21px; font-weight: 700; color: #f59e0b; margin: 0; line-height: 1.3;">গিটহাব পেজেস Settings পরিবর্তন করুন</h1>
+                      <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0; font-family: monospace;">GitHub Pages Configuration Required</p>
+                    </div>
+                  </div>
+                  
+                  <p style="font-size: 15px; line-height: 1.6; color: #cbd5e1; margin-bottom: 24px;">
+                    আপনার সোর্স কোডটি গিটহাব-এ আপলোড হয়েছে এবং ব্যাকগ্রাউন্ডে আমাদের অটোমেটিক বিল্ডও সম্পন্ন হয়েছে। কিন্তু গিটহাব পেজেস-এ সঠিক ব্রাঞ্চ এবং ফোল্ডার সিলেক্ট না করায় পেজটি সাদা বা ভুল দেখাচ্ছে। ব্রাউজার সরাসরি সোর্স কোড চালাতে পারে না, এটি কেবল বিল্ড করা ফাইলগুলো চালাতে পারে।
+                  </p>
+                  
+                  <h2 style="font-size: 16px; font-weight: 600; color: #38bdf8; margin: 0 0 14px 0; display: flex; align-items: center; gap: 6px;">
+                    <span>🛠️</span> সমাধান করার সহজ উপায় (How to Fix in 1 Minute):
+                  </h2>
+                  
+                  <ol style="font-size: 14px; line-height: 1.8; color: #e2e8f0; padding-left: 20px; margin-bottom: 28px;">
+                    <li style="margin-bottom: 10px;">আপনার GitHub রিপোজিটরিতে প্রবেশ করুন (যেখানে ফাইলগুলো আপলোড করেছেন)।</li>
+                    <li style="margin-bottom: 10px;">উপরে ডান দিকের মেন্যুবার থেকে ⚙️ <strong>Settings</strong> অপশনে ক্লিক করুন।</li>
+                    <li style="margin-bottom: 10px;">বাম পাশের সাইডবার মেন্যু থেকে 📄 <strong>Pages</strong> সিলেক্ট করুন।</li>
+                    <li style="margin-bottom: 10px;"><strong>Build and deployment</strong> সেকশনের অধীনে:
+                      <ul style="padding-left: 18px; margin-top: 6px; list-style-type: disc; color: #cbd5e1;">
+                        <li style="margin-bottom: 4px;"><strong>Source:</strong> <em>Deploy from a branch</em> সিলেক্ট রাখুন।</li>
+                        <li style="margin-bottom: 4px;"><strong>Branch:</strong> ড্রপডাউনটি থেকে <strong>main</strong> বা <strong>master</strong> সরিয়ে <u><strong>gh-pages</strong></u> সিলেক্ট করুন।</li>
+                        <li style="margin-bottom: 4px;"><strong>Folder:</strong> ডানদিকের ড্রপডাউনটি <code>/ (root)</code> রেখে পাশের <strong>Save</strong> বাটনে চাপুন।</li>
+                      </ul>
+                    </li>
+                    <li style="margin-bottom: 10px;">সংরক্ষণ করার পর ২ মিনিট অপেক্ষা করুন এবং পেজটি রিলোড দিন। আপনার ওয়েবসাইটটি চমৎকারভাবে চালু হয়ে যাবে!</li>
+                  </ol>
+                  
+                  <div style="background-color: #0b0f19; border-left: 4px solid #38bdf8; padding: 14px 18px; border-radius: 8px; font-size: 12px; color: #94a3b8; font-family: monospace; line-height: 1.5;">
+                    <strong>নোট:</strong> আমরা আপনার জন্য স্বয়ংক্রিয় GitHub Deploy Action সংযুক্ত করে দিয়েছি, যা প্রতিবার কোড আপডেট করার পর স্বয়ংক্রিয়ভাবে 'gh-pages' ব্রাঞ্চে বিল্ড করা ফাইলগুলো পুশ করে দেয়।
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        }
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
